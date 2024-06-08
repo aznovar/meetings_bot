@@ -31,6 +31,8 @@ func main() {
 	}
 	defer database.Close()
 
+	repository := db.NewMeetingRepository(database)
+
 	for update := range updates {
 		if update.Message == nil {
 			continue
@@ -38,13 +40,13 @@ func main() {
 
 		switch update.Message.Command() {
 		case "add_meeting":
-			handlers.HandleAddMeeting(bot, update.Message, database)
+			handlers.HandleAddMeeting(bot, update.Message, repository)
 		case "view_meetings":
-			handlers.HandleViewMeetings(bot, update.Message, database)
+			handlers.HandleViewMeetings(bot, update.Message, repository)
 		case "add_summary":
-			handlers.HandleAddSummary(bot, update.Message, database)
+			handlers.HandleAddSummary(bot, update.Message, repository)
 		case "remind":
-			handlers.HandleRemind(bot, update.Message, database)
+			handlers.HandleRemind(bot, update.Message, repository)
 		}
 	}
 }
