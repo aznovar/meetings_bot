@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	"database/sql"
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
+	"schedulertgbot/db"
 	"strings"
 	"time"
 )
 
-func HandleAddMeeting(bot *tgbotapi.BotAPI, message *tgbotapi.Message, db *sql.DB) {
+func HandleAddMeeting(bot *tgbotapi.BotAPI, message *tgbotapi.Message, repo *db.MeetingRepository) {
 	args := message.CommandArguments()
 	parts := strings.SplitN(args, ";", 3)
 	if len(parts) != 3 {
@@ -28,7 +28,7 @@ func HandleAddMeeting(bot *tgbotapi.BotAPI, message *tgbotapi.Message, db *sql.D
 		return
 	}
 
-	_, err = db.Exec("INSERT INTO meetings (title, date, participants) VALUES ($1, $2, $3)", title, date, participants)
+	err = repo.AddMeeting(title, date, participants)
 	if err != nil {
 		log.Fatal(err)
 	}
